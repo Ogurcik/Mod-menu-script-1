@@ -1,20 +1,22 @@
--- Часть 1: Создание базового интерфейса
+-- Часть 1: Создание и стилизация интерфейса
+
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local ToggleButton = Instance.new("TextButton")
 local CloseButton = Instance.new("TextButton")
 local FreezeButton = Instance.new("TextButton")
-local LocalItemsButton = Instance.new("TextButton")
+local SpeedLabel = Instance.new("TextLabel")
+local SpeedInput = Instance.new("TextBox")
 local SettingsButton = Instance.new("TextButton")
-local VersionLabel = Instance.new("TextLabel")
 local SettingsFrame = Instance.new("Frame")
+local SettingsCloseButton = Instance.new("TextButton")
+local DiscordLabel = Instance.new("TextLabel")
+local VersionLabel = Instance.new("TextLabel")
 local LanguageLabel = Instance.new("TextLabel")
 local EnglishButton = Instance.new("TextButton")
 local RussianButton = Instance.new("TextButton")
-local DiscordLabel = Instance.new("TextLabel")
-local UICorner = Instance.new("UICorner")
-local UIStroke = Instance.new("UIStroke")
 
+-- Основные элементы
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.Name = "MainMenuGui"
 
@@ -26,7 +28,7 @@ MainFrame.Size = UDim2.new(0, 400, 0, 400)
 MainFrame.Visible = false
 MainFrame.BorderSizePixel = 0
 
--- Кнопка переключения
+-- Кнопка переключения меню
 ToggleButton.Parent = ScreenGui
 ToggleButton.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
 ToggleButton.Position = UDim2.new(0, 0, 0, 0)
@@ -36,7 +38,7 @@ ToggleButton.TextColor3 = Color3.new(1, 1, 1)
 ToggleButton.Font = Enum.Font.SourceSans
 ToggleButton.TextSize = 24
 
--- Кнопка закрытия
+-- Кнопка закрытия основного меню
 CloseButton.Parent = MainFrame
 CloseButton.BackgroundColor3 = Color3.new(0.7, 0.1, 0.1)
 CloseButton.Position = UDim2.new(0.5, -50, 1, -40)
@@ -56,183 +58,248 @@ FreezeButton.TextColor3 = Color3.new(1, 1, 1)
 FreezeButton.Font = Enum.Font.SourceSans
 FreezeButton.TextSize = 24
 
--- Кнопка Local Items Giver
-LocalItemsButton.Parent = MainFrame
-LocalItemsButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
-LocalItemsButton.Position = UDim2.new(0.5, -100, 0, 80)
-LocalItemsButton.Size = UDim2.new(0, 200, 0, 50)
-LocalItemsButton.Text = "Local Items Giver (Beta-Test)"
-LocalItemsButton.TextColor3 = Color3.new(1, 1, 1)
-LocalItemsButton.Font = Enum.Font.SourceSans
-LocalItemsButton.TextSize = 24
+-- Метка скорости
+SpeedLabel.Parent = MainFrame
+SpeedLabel.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+SpeedLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
+SpeedLabel.Size = UDim2.new(0.8, 0, 0, 30)
+SpeedLabel.Text = "Speed:"
+SpeedLabel.TextColor3 = Color3.new(1, 1, 1)
+SpeedLabel.Font = Enum.Font.SourceSans
+SpeedLabel.TextSize = 24
+
+-- Поле ввода скорости
+SpeedInput.Parent = MainFrame
+SpeedInput.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
+SpeedInput.Position = UDim2.new(0.1, 0, 0.5, 0)
+SpeedInput.Size = UDim2.new(0.8, 0, 0, 30)
+SpeedInput.Text = "16"
+SpeedInput.TextColor3 = Color3.new(1, 1, 1)
+SpeedInput.Font = Enum.Font.SourceSans
+SpeedInput.TextSize = 24
 
 -- Кнопка настроек
 SettingsButton.Parent = MainFrame
-SettingsButton.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
-SettingsButton.Position = UDim2.new(0.5, -50, 0.9, -30)
+SettingsButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
+SettingsButton.Position = UDim2.new(0.5, -50, 1, -80)
 SettingsButton.Size = UDim2.new(0, 100, 0, 30)
 SettingsButton.Text = "Settings"
 SettingsButton.TextColor3 = Color3.new(1, 1, 1)
 SettingsButton.Font = Enum.Font.SourceSans
 SettingsButton.TextSize = 24
--- Часть 2: Настройка меток и стилей
-
--- Метка версии
-VersionLabel.Parent = ScreenGui
-VersionLabel.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
-VersionLabel.Position = UDim2.new(1, -120, 1, -30)
-VersionLabel.Size = UDim2.new(0, 100, 0, 30)
-VersionLabel.Text = "Version 1.0"
-VersionLabel.TextColor3 = Color3.new(1, 1, 1)
-VersionLabel.Font = Enum.Font.SourceSans
-VersionLabel.TextSize = 14
-VersionLabel.TextStrokeTransparency = 0.8
 
 -- Фрейм настроек
 SettingsFrame.Parent = MainFrame
 SettingsFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-SettingsFrame.Position = UDim2.new(0.1, 0, 0.1, 0)
-SettingsFrame.Size = UDim2.new(0.8, 0, 0.8, 0)
+SettingsFrame.Position = UDim2.new(0.5, -150, 0.5, -150)
+SettingsFrame.Size = UDim2.new(0, 300, 0, 200)
 SettingsFrame.Visible = false
+SettingsFrame.BorderSizePixel = 0
+
+-- Кнопка закрытия настроек
+SettingsCloseButton.Parent = SettingsFrame
+SettingsCloseButton.BackgroundColor3 = Color3.new(0.7, 0.1, 0.1)
+SettingsCloseButton.Position = UDim2.new(1, -60, 0, 10)
+SettingsCloseButton.Size = UDim2.new(0, 50, 0, 30)
+SettingsCloseButton.Text = "Close"
+SettingsCloseButton.TextColor3 = Color3.new(1, 1, 1)
+SettingsCloseButton.Font = Enum.Font.SourceSans
+SettingsCloseButton.TextSize = 20
+
+-- Метка версии
+VersionLabel.Parent = SettingsFrame
+VersionLabel.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+VersionLabel.Position = UDim2.new(0.1, 0, 0.1, 0)
+VersionLabel.Size = UDim2.new(0.8, 0, 0, 30)
+VersionLabel.Text = "Version: 1.0"
+VersionLabel.TextColor3 = Color3.new(1, 1, 1)
+VersionLabel.Font = Enum.Font.SourceSans
+VersionLabel.TextSize = 20
+
+-- Метка Discord
+DiscordLabel.Parent = SettingsFrame
+DiscordLabel.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+DiscordLabel.Position = UDim2.new(0.1, 0, 0.2, 0)
+DiscordLabel.Size = UDim2.new(0.8, 0, 0, 30)
+DiscordLabel.Text = "Discord: https://discord.com/invite/KRY2WQHP6z"
+DiscordLabel.TextColor3 = Color3.new(1, 1, 1)
+DiscordLabel.Font = Enum.Font.SourceSans
+DiscordLabel.TextSize = 20
 
 -- Метка выбора языка
 LanguageLabel.Parent = SettingsFrame
-LanguageLabel.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
-LanguageLabel.Position = UDim2.new(0.1, 0, 0.1, 0)
+LanguageLabel.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+LanguageLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
 LanguageLabel.Size = UDim2.new(0.8, 0, 0, 30)
 LanguageLabel.Text = "Select Language:"
 LanguageLabel.TextColor3 = Color3.new(1, 1, 1)
 LanguageLabel.Font = Enum.Font.SourceSans
-LanguageLabel.TextSize = 24
+LanguageLabel.TextSize = 20
 
 -- Кнопка выбора английского языка
 EnglishButton.Parent = SettingsFrame
-EnglishButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
-EnglishButton.Position = UDim2.new(0.1, 0, 0.2, 0)
-EnglishButton.Size = UDim2.new(0.35, 0, 0, 50)
+EnglishButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+EnglishButton.Position = UDim2.new(0.1, 0, 0.5, 0)
+EnglishButton.Size = UDim2.new(0.35, 0, 0, 30)
 EnglishButton.Text = "English"
 EnglishButton.TextColor3 = Color3.new(1, 1, 1)
 EnglishButton.Font = Enum.Font.SourceSans
-EnglishButton.TextSize = 24
+EnglishButton.TextSize = 20
 
 -- Кнопка выбора русского языка
 RussianButton.Parent = SettingsFrame
-RussianButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
-RussianButton.Position = UDim2.new(0.55, 0, 0.2, 0)
-RussianButton.Size = UDim2.new(0.35, 0, 0, 50)
-RussianButton.Text = "Russian"
+RussianButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+RussianButton.Position = UDim2.new(0.55, 0, 0.5, 0)
+RussianButton.Size = UDim2.new(0.35, 0, 0, 30)
+RussianButton.Text = "Русский"
 RussianButton.TextColor3 = Color3.new(1, 1, 1)
 RussianButton.Font = Enum.Font.SourceSans
-RussianButton.TextSize = 24
+RussianButton.TextSize = 20
+-- Часть 2: Логика для обработки событий и настройки интерфейса
 
--- Ссылка на Discord
-DiscordLabel.Parent = ScreenGui
-DiscordLabel.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
-DiscordLabel.Position = UDim2.new(1, -200, 1, -30)
-DiscordLabel.Size = UDim2.new(0, 180, 0, 30)
-DiscordLabel.Text = "Discord: https://discord.com/invite/KRY2WQHP6z"
-DiscordLabel.TextColor3 = Color3.new(0.3, 0.7, 1)
-DiscordLabel.Font = Enum.Font.SourceSans
-DiscordLabel.TextSize = 14
-DiscordLabel.TextWrapped = true
-DiscordLabel.TextXAlignment = Enum.TextXAlignment.Left
--- Часть 3: Применение стилей и углов
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
-local function applyStyle(element)
-    local corner = UICorner:Clone()
-    corner.Parent = element
+local isFrozen = false
+local originalWalkSpeed = 16
+local currentSpeed = originalWalkSpeed
+local connection
 
-    local stroke = UIStroke:Clone()
-    stroke.Parent = element
+local function toggleFreeze()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+
+    if humanoid then
+        if not isFrozen then
+            -- Стоп-движение для других игроков
+            character.HumanoidRootPart.Anchored = true
+
+            -- Локальное движение
+            connection = RunService.RenderStepped:Connect(function()
+                if isFrozen then
+                    local moveDirection = humanoid.MoveDirection
+                    local delta = moveDirection * currentSpeed / 60
+                    character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame + delta
+                end
+            end)
+
+            -- Включить заморозку
+            isFrozen = true
+            FreezeButton.Text = "Unfreeze"
+        else
+            -- Вернуться к нормальному состоянию
+            character.HumanoidRootPart.Anchored = false
+            humanoid.WalkSpeed = originalWalkSpeed
+
+            -- Отключить заморозку
+            isFrozen = false
+            FreezeButton.Text = "Freeze"
+            if connection then connection:Disconnect() end
+        end
+    end
 end
 
--- Применение стилей ко всем кнопкам и меткам
-applyStyle(ToggleButton)
-applyStyle(CloseButton)
-applyStyle(FreezeButton)
-applyStyle(LocalItemsButton)
-applyStyle(SettingsButton)
-applyStyle(EnglishButton)
-applyStyle(RussianButton)
-applyStyle(VersionLabel)
-applyStyle(DiscordLabel)
-
--- Установка стиля для фрейма настроек
-SettingsFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
-SettingsFrame.BorderSizePixel = 0
--- Часть 4: Обработка событий для кнопок
-
--- Переключение видимости мод меню
-ToggleButton.MouseButton1Click:Connect(function()
-    if MainFrame.Visible then
-        closeMenu()
+-- Обновление скорости из ввода
+local function updateSpeedFromInput()
+    local inputSpeed = tonumber(SpeedInput.Text)
+    if inputSpeed and inputSpeed > 0 then
+        currentSpeed = inputSpeed
+        SpeedLabel.Text = "Speed: " .. tostring(currentSpeed)
     else
-        openMenu()
+        SpeedInput.Text = tostring(currentSpeed)
+    end
+end
+
+SpeedInput.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        updateSpeedFromInput()
     end
 end)
 
--- Закрытие мод меню
-CloseButton.MouseButton1Click:Connect(function()
-    closeMenu()
+-- Обработка выбора языка
+local function updateLanguage(language)
+    if language == "English" then
+        SpeedLabel.Text = "Speed:"
+        FreezeButton.Text = "Freeze"
+        SettingsButton.Text = "Settings"
+        CloseButton.Text = "Close"
+        VersionLabel.Text = "Version: 1.0"
+        DiscordLabel.Text = "Discord: https://discord.com/invite/KRY2WQHP6z"
+        LanguageLabel.Text = "Select Language:"
+        EnglishButton.Text = "English"
+        RussianButton.Text = "Русский"
+    elseif language == "Russian" then
+        SpeedLabel.Text = "Скорость:"
+        FreezeButton.Text = "Заморозить"
+        SettingsButton.Text = "Настройки"
+        CloseButton.Text = "Закрыть"
+        VersionLabel.Text = "Версия: 1.0"
+        DiscordLabel.Text = "Discord: https://discord.com/invite/KRY2WQHP6z"
+        LanguageLabel.Text = "Выберите язык:"
+        EnglishButton.Text = "English"
+        RussianButton.Text = "Русский"
+    end
+end
+
+-- Обработчики событий
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
 end)
 
--- Пример обработки события заморозки
+CloseButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+end)
+
 FreezeButton.MouseButton1Click:Connect(function()
     toggleFreeze()
 end)
 
--- Пример обработки события для Local Items Giver
-LocalItemsButton.MouseButton1Click:Connect(function()
-    print("Local Items Giver button clicked")
-    -- Логика для получения всех доступных предметов
-end)
-
--- Открытие и закрытие фрейма настроек
 SettingsButton.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = not SettingsFrame.Visible
 end)
 
--- Выбор языка
+SettingsCloseButton.MouseButton1Click:Connect(function()
+    SettingsFrame.Visible = false
+end)
+
 EnglishButton.MouseButton1Click:Connect(function()
-    print("English selected")
-    -- Логика для переключения на английский язык
+    updateLanguage("English")
 end)
 
 RussianButton.MouseButton1Click:Connect(function()
-    print("Russian selected")
-    -- Логика для переключения на русский язык
+    updateLanguage("Russian")
 end)
--- Часть 5: Плавное открытие и закрытие мод меню
 
-local TweenService = game:GetService("TweenService")
+-- Функция для плавного открытия и закрытия фрейма
+local function tweenFrame(frame, goalSize, goalPosition, duration)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+    local tween = game:GetService("TweenService"):Create(frame, tweenInfo, {Size = goalSize, Position = goalPosition})
+    tween:Play()
+end
 
-local function openMenu()
+local function showMainFrame()
     MainFrame.Visible = true
-    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local goal = {Size = UDim2.new(0, 400, 0, 400)}
-    local tween = TweenService:Create(MainFrame, tweenInfo, goal)
-    tween:Play()
+    tweenFrame(MainFrame, UDim2.new(0, 400, 0, 400), UDim2.new(0.5, -200, 0.5, -200), 0.5)
 end
 
-local function closeMenu()
-    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-    local goal = {Size = UDim2.new(0, 0, 0, 0)}
-    local tween = TweenService:Create(MainFrame, tweenInfo, goal)
-    tween.Completed:Connect(function()
-        MainFrame.Visible = false
-    end)
-    tween:Play()
+local function hideMainFrame()
+    tweenFrame(MainFrame, UDim2.new(0, 0, 0, 0), UDim2.new(0.5, -200, 0.5, -200), 0.5)
+    wait(0.5)
+    MainFrame.Visible = false
 end
 
+-- Обновление состояния при запуске
 ToggleButton.MouseButton1Click:Connect(function()
     if MainFrame.Visible then
-        closeMenu()
+        hideMainFrame()
     else
-        openMenu()
+        showMainFrame()
     end
 end)
--- Часть 6: Перетаскивание мод меню
+-- Часть 3: Перетаскивание мод меню и дополнительные настройки
 
+-- Перетаскивание меню
 local dragging
 local dragInput
 local dragStart
@@ -262,69 +329,48 @@ MainFrame.InputChanged:Connect(function(input)
         update(input)
     end
 end)
--- Часть 7: Логика для заморозки и управления скоростью
 
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-
-local isFrozen = false
-local originalWalkSpeed = 16
-local currentSpeed = originalWalkSpeed
-local connection
-
-local function toggleFreeze()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-    if humanoid then
-        if not isFrozen then
-            -- Остановка движения персонажа
-            character.HumanoidRootPart.Anchored = true
-
-            -- Локальное движение
-            connection = RunService.RenderStepped:Connect(function()
-                if isFrozen then
-                    local moveDirection = humanoid.MoveDirection
-                    local delta = moveDirection * currentSpeed / 60
-                    character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame + delta
-                end
-            end)
-
-            -- Включение заморозки
-            isFrozen = true
-            FreezeButton.Text = "Unfreeze"
-        else
-            -- Возвращение в нормальное состояние
-            character.HumanoidRootPart.Anchored = false
-            humanoid.WalkSpeed = originalWalkSpeed
-
-            -- Выключение заморозки
-            isFrozen = false
-            FreezeButton.Text = "Freeze"
-            if connection then connection:Disconnect() end
-        end
-    end
+-- Плавное открытие и закрытие фрейма
+local function tweenFrame(frame, goalSize, goalPosition, duration)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+    local tween = game:GetService("TweenService"):Create(frame, tweenInfo, {Size = goalSize, Position = goalPosition})
+    tween:Play()
 end
 
--- Обновление скорости из ввода
-local function updateSpeedFromInput()
-    local inputSpeed = tonumber(SpeedInput.Text)
-    if inputSpeed and inputSpeed > 0 then
-        currentSpeed = inputSpeed
-        SpeedLabel.Text = "Speed: " .. tostring(currentSpeed)
+local function showMainFrame()
+    MainFrame.Visible = true
+    tweenFrame(MainFrame, UDim2.new(0, 400, 0, 400), UDim2.new(0.5, -200, 0.5, -200), 0.5)
+end
+
+local function hideMainFrame()
+    tweenFrame(MainFrame, UDim2.new(0, 0, 0, 0), UDim2.new(0.5, -200, 0.5, -200), 0.5)
+    wait(0.5)
+    MainFrame.Visible = false
+end
+
+-- Обновление состояния при запуске
+ToggleButton.MouseButton1Click:Connect(function()
+    if MainFrame.Visible then
+        hideMainFrame()
     else
-        SpeedInput.Text = tostring(currentSpeed)
+        showMainFrame()
     end
+end)
+
+-- Обновление версии и дискорда
+local function updateSettings()
+    VersionLabel.Text = "Version: 1.0"
+    DiscordLabel.Text = "Discord: https://discord.com/invite/KRY2WQHP6z"
 end
 
-SpeedInput.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        updateSpeedFromInput()
-    end
+-- Кнопка настроек
+SettingsButton.MouseButton1Click:Connect(function()
+    SettingsFrame.Visible = true
 end)
 
--- Обработка события заморозки
-FreezeButton.MouseButton1Click:Connect(function()
-    toggleFreeze()
+SettingsCloseButton.MouseButton1Click:Connect(function()
+    SettingsFrame.Visible = false
 end)
+
+-- Инициализация
+updateSettings()
