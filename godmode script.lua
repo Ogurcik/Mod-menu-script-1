@@ -11,6 +11,7 @@ local VersionLabel = Instance.new("TextLabel")
 
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.Name = "MainMenuGui"
+
 -- Настройка главной рамки
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
@@ -107,6 +108,7 @@ setupElement(CloseButton)
 setupElement(FreezeButton)
 setupElement(SpeedInput)
 setupElement(LocalItemsButton)
+
 local isFrozen = false
 local originalWalkSpeed = 16
 local currentSpeed = originalWalkSpeed
@@ -187,15 +189,16 @@ local TweenService = game:GetService("TweenService")
 
 -- Анимация открытия и закрытия меню
 local function toggleMenuVisibility()
-    local goal = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0, false)
-    
-    local tweenOpen = TweenService:Create(MainFrame, goal, {Size = UDim2.new(0, 400, 0, 400)})
-    local tweenClose = TweenService:Create(MainFrame, goal, {Size = UDim2.new(0, 400, 0, 0)})
-    
+    local goalOpen = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+    local goalClose = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+
+    local tweenOpen = TweenService:Create(MainFrame, goalOpen, {Size = UDim2.new(0, 400, 0, 400)})
+    local tweenClose = TweenService:Create(MainFrame, goalClose, {Size = UDim2.new(0, 400, 0, 0)})
+
     if MainFrame.Visible then
         tweenClose:Play()
         tweenClose.Completed:Connect(function()
-            MainFrame.Visible = false
+MainFrame.Visible = false
         end)
     else
         MainFrame.Visible = true
@@ -205,14 +208,57 @@ end
 
 ToggleButton.MouseButton1Click:Connect(toggleMenuVisibility)
 CloseButton.MouseButton1Click:Connect(toggleMenuVisibility)
-local UserInputService = game:GetService("UserInputService")
+local dragging = false
+local dragInput, dragStart, startPos
 
-local function onInputBegan(input)
-    if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
-        if not MainFrame.Visible then
-            toggleMenuVisibility()
-        end
-    end
+local function update(input)
+    local delta = input.Position - dragStart
+    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
-UserInputService.InputBegan:Connect(onInputBegan)
+local function endDrag()
+    dragging = false
+    dragInput.Changed:Disconnect()
+end
+
+ToggleButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+
+        dragInput = input
+        dragInput.Changed:Connect(function()
+            if dragging then
+                update(dragInput)
+            end
+        end)
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                endDrag()
+            end
+        end)
+    end
+end)
+
+CloseButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = MainFrame.Position
+
+        dragInput = input
+        dragInput.Changed:Connect(function()
+            if dragging then
+                update(dragInput)
+            end
+        end)
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                endDrag()
+            end
+        end)
+    end
+end)
