@@ -90,7 +90,6 @@ VersionLabel.Text = "Version 1.0"
 VersionLabel.TextColor3 = Color3.new(1, 1, 1)
 VersionLabel.Font = Enum.Font.SourceSans
 VersionLabel.TextSize = 18
-
 -- Функция для настройки углов и обводок элементов
 local function setupElement(element)
     local corner = Instance.new("UICorner")
@@ -184,9 +183,9 @@ local function giveAllItems()
 end
 
 LocalItemsButton.MouseButton1Click:Connect(giveAllItems)
--- Анимация открытия и закрытия меню
 local TweenService = game:GetService("TweenService")
 
+-- Анимация открытия и закрытия меню
 local function toggleMenuVisibility()
     local goal = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0, false)
     
@@ -206,7 +205,6 @@ end
 
 ToggleButton.MouseButton1Click:Connect(toggleMenuVisibility)
 CloseButton.MouseButton1Click:Connect(toggleMenuVisibility)
-
 local UserInputService = game:GetService("UserInputService")
 
 local function onInputBegan(input)
