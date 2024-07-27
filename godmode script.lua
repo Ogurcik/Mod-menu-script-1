@@ -1,4 +1,3 @@
--- Создание интерфейса и базовые настройки
 local function createUI()
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
@@ -169,7 +168,6 @@ local function toggleFreeze(isFrozen, FreezeButton, SpeedLabel, SpeedInput, curr
     end
     return isFrozen
 end
-
 -- Настройка кнопки заморозки
 local function setupFreezeButton(FreezeButton, SpeedLabel, SpeedInput)
     local isFrozen = false
@@ -178,18 +176,23 @@ local function setupFreezeButton(FreezeButton, SpeedLabel, SpeedInput)
     FreezeButton.MouseButton1Click:Connect(function()
         isFrozen = toggleFreeze(isFrozen, FreezeButton, SpeedLabel, SpeedInput, currentSpeed)
     end)
+
+    SpeedInput.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            currentSpeed = updateSpeedFromInput(SpeedInput, SpeedLabel)
+        end
+    end)
 end
 -- Обновление скорости из текстового поля
 local function updateSpeedFromInput(SpeedInput, SpeedLabel, currentSpeed)
     local inputSpeed = tonumber(SpeedInput.Text)
     if inputSpeed and inputSpeed > 0 then
-        currentSpeed = inputSpeed
-        SpeedLabel.Text = "Speed: " .. tostring(currentSpeed)
+        SpeedLabel.Text = "Speed: " .. tostring(inputSpeed)
+        return inputSpeed
     else
         SpeedInput.Text = tostring(currentSpeed)
+        return currentSpeed
     end
-end
-    return currentSpeed
 end
 
 -- Настройка поля ввода скорости
@@ -204,7 +207,6 @@ local function setupSpeedInput(SpeedInput, SpeedLabel)
 
     return currentSpeed
 end
-
 -- Функция для выдачи всех доступных предметов
 local function giveAllItems()
     local player = game.Players.LocalPlayer
@@ -240,7 +242,6 @@ local function toggleMenuVisibility(MainFrame)
         tweenOpen:Play()
     end
 end
-
 -- Настройка кнопок открытия и закрытия меню
 local function setupToggleButtons(ToggleButton, CloseButton, MainFrame)
     ToggleButton.MouseButton1Click:Connect(function()
@@ -299,11 +300,10 @@ local function initializeUI()
     local elements = createUI()
     applyStyling(elements)
     setupFreezeButton(elements.FreezeButton, elements.SpeedLabel, elements.SpeedInput)
-    local currentSpeed = setupSpeedInput(elements.SpeedInput, elements.SpeedLabel)
     setupLocalItemsButton(elements.LocalItemsButton)
     setupToggleButtons(elements.ToggleButton, elements.CloseButton, elements.MainFrame)
     setupDraggable(elements.MainFrame)
 end
 
 -- Инициализация интерфейса
-initializeUI() 
+initializeUI()
