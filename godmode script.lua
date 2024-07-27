@@ -1,3 +1,4 @@
+-- UI Creation Module
 local function createUI()
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
@@ -12,15 +13,13 @@ local function createUI()
     ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
     ScreenGui.Name = "MainMenuGui"
 
-    -- Настройка главной рамки
     MainFrame.Parent = ScreenGui
     MainFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
     MainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
-    MainFrame.Size = UDim2.new(0, 400, 0, 0)
+    MainFrame.Size = UDim2.new(0, 400, 0, 400)
     MainFrame.Visible = false
     MainFrame.BorderSizePixel = 0
 
-    -- Настройка кнопки открытия/закрытия меню
     ToggleButton.Parent = ScreenGui
     ToggleButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     ToggleButton.Position = UDim2.new(0, 0, 0, 0)
@@ -30,7 +29,6 @@ local function createUI()
     ToggleButton.Font = Enum.Font.GothamBold
     ToggleButton.TextSize = 24
 
-    -- Настройка кнопки закрытия меню
     CloseButton.Parent = MainFrame
     CloseButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
     CloseButton.Position = UDim2.new(0.5, -50, 1, -40)
@@ -40,7 +38,6 @@ local function createUI()
     CloseButton.Font = Enum.Font.GothamBold
     CloseButton.TextSize = 24
 
-    -- Настройка кнопки заморозки
     FreezeButton.Parent = MainFrame
     FreezeButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
     FreezeButton.Position = UDim2.new(0.5, -50, 0, 20)
@@ -50,7 +47,6 @@ local function createUI()
     FreezeButton.Font = Enum.Font.GothamBold
     FreezeButton.TextSize = 24
 
-    -- Настройка метки скорости
     SpeedLabel.Parent = MainFrame
     SpeedLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     SpeedLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
@@ -61,7 +57,6 @@ local function createUI()
     SpeedLabel.TextSize = 24
     SpeedLabel.Visible = false
 
-    -- Настройка поля ввода скорости
     SpeedInput.Parent = MainFrame
     SpeedInput.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     SpeedInput.Position = UDim2.new(0.1, 0, 0.5, 0)
@@ -72,7 +67,6 @@ local function createUI()
     SpeedInput.TextSize = 24
     SpeedInput.Visible = false
 
-    -- Настройка кнопки выдачи предметов
     LocalItemsButton.Parent = MainFrame
     LocalItemsButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
     LocalItemsButton.Position = UDim2.new(0.5, -50, 0, 100)
@@ -82,21 +76,19 @@ local function createUI()
     LocalItemsButton.Font = Enum.Font.GothamBold
     LocalItemsButton.TextSize = 24
 
-    -- Настройка метки версии
     VersionLabel.Parent = MainFrame
     VersionLabel.BackgroundTransparency = 1
     VersionLabel.Position = UDim2.new(1, -100, 1, -20)
     VersionLabel.Size = UDim2.new(0, 100, 0, 20)
     VersionLabel.Text = "Version 1.1"
-    VersionLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    VersionLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
     VersionLabel.Font = Enum.Font.GothamBold
     VersionLabel.TextSize = 18
 
-    -- Добавление градиента к метке версии
     local versionGradient = Instance.new("UIGradient")
     versionGradient.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 0)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 0))
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 0))
     }
     versionGradient.Parent = VersionLabel
 
@@ -112,7 +104,7 @@ local function createUI()
         VersionLabel = VersionLabel
     }
 end
--- Функция для настройки углов и обводок элементов
+-- Styling Module
 local function setupElement(element)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 10)
@@ -124,7 +116,6 @@ local function setupElement(element)
     stroke.Parent = element
 end
 
--- Применение стилей ко всем элементам
 local function applyStyling(elements)
     setupElement(elements.ToggleButton)
     setupElement(elements.CloseButton)
@@ -132,58 +123,7 @@ local function applyStyling(elements)
     setupElement(elements.SpeedInput)
     setupElement(elements.LocalItemsButton)
 end
--- Функциональность заморозки персонажа
-local function toggleFreeze(isFrozen, FreezeButton, SpeedLabel, SpeedInput, currentSpeed)
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-    local connection
-
-    if humanoid then
-        if not isFrozen then
-            character.HumanoidRootPart.Anchored = true
-
-            connection = game:GetService("RunService").RenderStepped:Connect(function()
-                if isFrozen then
-                    local moveDirection = humanoid.MoveDirection
-                    local delta = moveDirection * currentSpeed / 60
-                    character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame + delta
-                end
-            end)
-
-            isFrozen = true
-            FreezeButton.Text = "Unfreeze"
-            SpeedLabel.Visible = true
-            SpeedInput.Visible = true
-        else
-            character.HumanoidRootPart.Anchored = false
-            humanoid.WalkSpeed = 16
-
-            isFrozen = false
-            FreezeButton.Text = "Freeze"
-            if connection then connection:Disconnect() end
-            SpeedLabel.Visible = false
-            SpeedInput.Visible = false
-        end
-    end
-    return isFrozen
-end
--- Настройка кнопки заморозки
-local function setupFreezeButton(FreezeButton, SpeedLabel, SpeedInput)
-    local isFrozen = false
-    local currentSpeed = 16
-
-    FreezeButton.MouseButton1Click:Connect(function()
-        isFrozen = toggleFreeze(isFrozen, FreezeButton, SpeedLabel, SpeedInput, currentSpeed)
-    end)
-
-    SpeedInput.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
-            currentSpeed = updateSpeedFromInput(SpeedInput, SpeedLabel)
-        end
-    end)
-end
--- Обновление скорости из текстового поля
+-- Functionality Module
 local function updateSpeedFromInput(SpeedInput, SpeedLabel, currentSpeed)
     local inputSpeed = tonumber(SpeedInput.Text)
     if inputSpeed and inputSpeed > 0 then
@@ -195,19 +135,53 @@ local function updateSpeedFromInput(SpeedInput, SpeedLabel, currentSpeed)
     end
 end
 
--- Настройка поля ввода скорости
-local function setupSpeedInput(SpeedInput, SpeedLabel)
+local function setupFreezeButton(FreezeButton, SpeedLabel, SpeedInput)
+    local isFrozen = false
     local currentSpeed = 16
+    local connection
+
+    local function toggleFreeze()
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+
+        if humanoid then
+            if not isFrozen then
+                character.HumanoidRootPart.Anchored = true
+                connection = game:GetService("RunService").RenderStepped:Connect(function()
+                    if isFrozen then
+                        local moveDirection = humanoid.MoveDirection
+                        local delta = moveDirection * currentSpeed / 60
+                        character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame + delta
+                    end
+                end)
+                isFrozen = true
+                FreezeButton.Text = "Unfreeze"
+                SpeedLabel.Visible = true
+                SpeedInput.Visible = true
+            else
+                character.HumanoidRootPart.Anchored = false
+                humanoid.WalkSpeed = 16
+                isFrozen = false
+                FreezeButton.Text = "Freeze"
+                if connection then connection:Disconnect() end
+                SpeedLabel.Visible = false
+                SpeedInput.Visible = false
+            end
+        end
+    end
+
+    FreezeButton.MouseButton1Click:Connect(function()
+        toggleFreeze()
+    end)
 
     SpeedInput.FocusLost:Connect(function(enterPressed)
         if enterPressed then
             currentSpeed = updateSpeedFromInput(SpeedInput, SpeedLabel, currentSpeed)
         end
     end)
-
-    return currentSpeed
 end
--- Функция для выдачи всех доступных предметов
+
 local function giveAllItems()
     local player = game.Players.LocalPlayer
     local backpack = player.Backpack
@@ -218,92 +192,73 @@ local function giveAllItems()
     end
 end
 
--- Настройка кнопки выдачи предметов
 local function setupLocalItemsButton(LocalItemsButton)
     LocalItemsButton.MouseButton1Click:Connect(giveAllItems)
 end
--- Анимация открытия и закрытия меню
-local function toggleMenuVisibility(MainFrame)
-    local TweenService = game:GetService("TweenService")
 
-    local goalOpen = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
-    local goalClose = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
-
-    local tweenOpen = TweenService:Create(MainFrame, goalOpen, {Size = UDim2.new(0, 400, 0, 400)})
-    local tweenClose = TweenService:Create(MainFrame, goalClose, {Size = UDim2.new(0, 400, 0, 0)})
-
-    if MainFrame.Visible then
-        tweenClose:Play()
-        tweenClose.Completed:Connect(function()
-            MainFrame.Visible = false
-        end)
-    else
-        MainFrame.Visible = true
-        tweenOpen:Play()
-    end
-end
--- Настройка кнопок открытия и закрытия меню
 local function setupToggleButtons(ToggleButton, CloseButton, MainFrame)
     ToggleButton.MouseButton1Click:Connect(function()
-        toggleMenuVisibility(MainFrame)
+        MainFrame.Visible = not MainFrame.Visible
     end)
 
     CloseButton.MouseButton1Click:Connect(function()
-        toggleMenuVisibility(MainFrame)
+        MainFrame.Visible = false
     end)
 end
--- Перемещение меню
-local function setupDraggable(MainFrame)
-    local dragging = false
-    local dragInput, dragStart, startPos
+-- Draggable Module
+local function makeDraggable(gui)
+    local dragging
+    local dragInput
+    local dragStart
+    local startPos
 
     local function update(input)
         local delta = input.Position - dragStart
-        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
 
-    local function endDrag()
-        dragging = false
-        if dragInput then
-            dragInput:Disconnect()
-        end
-    end
-
-    MainFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+    gui.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
-            startPos = MainFrame.Position
-
-            dragInput = input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    endDrag()
-                end
-            end)
+            startPos = gui.Position
 
             input.Changed:Connect(function()
-                if dragging then
-                    update(input)
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
                 end
             end)
         end
     end)
 
-    MainFrame.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            endDrag()
+    gui.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            update(input)
         end
     end)
 end
--- Главная функция для инициализации интерфейса
+-- Initialization Module
 local function initializeUI()
+    -- Create UI elements
     local elements = createUI()
+
+    -- Apply styling to elements
     applyStyling(elements)
+
+    -- Setup functionality
     setupFreezeButton(elements.FreezeButton, elements.SpeedLabel, elements.SpeedInput)
     setupLocalItemsButton(elements.LocalItemsButton)
     setupToggleButtons(elements.ToggleButton, elements.CloseButton, elements.MainFrame)
-    setupDraggable(elements.MainFrame)
+
+    -- Make the MainFrame draggable
+    makeDraggable(elements.MainFrame)
 end
 
--- Инициализация интерфейса
+-- Initialize the UI
 initializeUI()
