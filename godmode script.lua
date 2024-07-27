@@ -8,14 +8,9 @@ local SpeedLabel = Instance.new("TextLabel")
 local SpeedInput = Instance.new("TextBox")
 local LocalItemsButton = Instance.new("TextButton")
 local VersionLabel = Instance.new("TextLabel")
-local UICorner = Instance.new("UICorner")
-local UIStroke = Instance.new("UIStroke")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.Name = "MainMenuGui"
-
 -- Настройка главной рамки
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
@@ -23,6 +18,7 @@ MainFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
 MainFrame.Size = UDim2.new(0, 400, 0, 400)
 MainFrame.Visible = false
 MainFrame.BorderSizePixel = 0
+
 -- Настройка кнопки открытия/закрытия меню
 ToggleButton.Parent = ScreenGui
 ToggleButton.BackgroundColor3 = Color3.new(0.5, 0.5, 0.5)
@@ -94,55 +90,42 @@ VersionLabel.Text = "Version 1.0"
 VersionLabel.TextColor3 = Color3.new(1, 1, 1)
 VersionLabel.Font = Enum.Font.SourceSans
 VersionLabel.TextSize = 18
--- Настройка углов кнопок
-UICorner.CornerRadius = UDim.new(0, 10)
-UICorner.Parent = ToggleButton
 
-local UICornerClose = UICorner:Clone()
-UICornerClose.Parent = CloseButton
+-- Функция для настройки углов и обводок элементов
+local function setupElement(element)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 10)
+    corner.Parent = element
+    
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.new(0, 0, 0)
+    stroke.Thickness = 2
+    stroke.Parent = element
+end
 
-local UICornerFreeze = UICorner:Clone()
-UICornerFreeze.Parent = FreezeButton
-
-local UICornerSpeedInput = UICorner:Clone()
-UICornerSpeedInput.Parent = SpeedInput
-
-local UICornerLocalItemsButton = UICorner:Clone()
-UICornerLocalItemsButton.Parent = LocalItemsButton
-
--- Настройка обводки кнопок
-UIStroke.Parent = ToggleButton
-UIStroke.Color = Color3.new(0, 0, 0)
-UIStroke.Thickness = 2
-
-local UIStrokeClose = UIStroke:Clone()
-UIStrokeClose.Parent = CloseButton
-
-local UIStrokeFreeze = UIStroke:Clone()
-UIStrokeFreeze.Parent = FreezeButton
-
-local UIStrokeSpeedInput = UIStroke:Clone()
-UIStrokeSpeedInput.Parent = SpeedInput
-
-local UIStrokeLocalItemsButton = UIStroke:Clone()
-UIStrokeLocalItemsButton.Parent = LocalItemsButton
+setupElement(ToggleButton)
+setupElement(CloseButton)
+setupElement(FreezeButton)
+setupElement(SpeedInput)
+setupElement(LocalItemsButton)
 local isFrozen = false
 local originalWalkSpeed = 16
 local currentSpeed = originalWalkSpeed
 local connection
 
+-- Функция для переключения заморозки персонажа
 local function toggleFreeze()
     local player = game.Players.LocalPlayer
     local character = player.Character
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
     if humanoid then
         if not isFrozen then
-            -- Остановка персонажа для других игроков
+            -- Остановка персонажа
             character.HumanoidRootPart.Anchored = true
 
-            -- Событие для локального перемещения
-            connection = RunService.RenderStepped:Connect(function()
+            -- Локальная функция для обновления позиции
+            connection = game:GetService("RunService").RenderStepped:Connect(function()
                 if isFrozen then
                     local moveDirection = humanoid.MoveDirection
                     local delta = moveDirection * currentSpeed / 60
@@ -170,7 +153,9 @@ local function toggleFreeze()
     end
 end
 
--- Функция для обновления скорости с клавиатуры
+FreezeButton.MouseButton1Click:Connect(toggleFreeze)
+
+-- Функция для обновления скорости из текстового поля
 local function updateSpeedFromInput()
     local inputSpeed = tonumber(SpeedInput.Text)
     if inputSpeed and inputSpeed > 0 then
@@ -186,6 +171,7 @@ SpeedInput.FocusLost:Connect(function(enterPressed)
         updateSpeedFromInput()
     end
 end)
+
 -- Функция для выдачи всех доступных предметов
 local function giveAllItems()
     local player = game.Players.LocalPlayer
@@ -198,45 +184,14 @@ local function giveAllItems()
 end
 
 LocalItemsButton.MouseButton1Click:Connect(giveAllItems)
-
--- Добавление функции перетаскивания меню
-local dragging
-local dragInput
-local dragStart
-local startPos
-
-local function update(input)
-    local delta = input.Position - dragStart
-    MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-end
-
-MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = MainFrame.Position
-        
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-MainFrame.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-        update(input)
-    end
-end)
-
 -- Анимация открытия и закрытия меню
+local TweenService = game:GetService("TweenService")
+
 local function toggleMenuVisibility()
-    local tweenService = game:GetService("TweenService")
-    local goal = Instance.new("TweenInfo", 0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0, false)
+    local goal = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, 0, false)
     
-    local tweenOpen = tweenService:Create(MainFrame, goal, {Position = UDim2.new(0.5, -200, 0.5, -200), Size = UDim2.new(0, 400, 0, 400)})
-    local tweenClose = tweenService:Create(MainFrame, goal, {Position = UDim2.new(0.5, -200, 0.5, -100), Size = UDim2.new(0, 400, 0, 0)})
+    local tweenOpen = TweenService:Create(MainFrame, goal, {Size = UDim2.new(0, 400, 0, 400)})
+    local tweenClose = TweenService:Create(MainFrame, goal, {Size = UDim2.new(0, 400, 0, 0)})
     
     if MainFrame.Visible then
         tweenClose:Play()
@@ -251,7 +206,9 @@ end
 
 ToggleButton.MouseButton1Click:Connect(toggleMenuVisibility)
 CloseButton.MouseButton1Click:Connect(toggleMenuVisibility)
--- Адаптация для всех устройств
+
+local UserInputService = game:GetService("UserInputService")
+
 local function onInputBegan(input)
     if input.UserInputType == Enum.UserInputType.Touch or input.UserInputType == Enum.UserInputType.MouseButton1 then
         if not MainFrame.Visible then
@@ -261,23 +218,3 @@ local function onInputBegan(input)
 end
 
 UserInputService.InputBegan:Connect(onInputBegan)
--- Проверка кнопок
-local function validateButtons()
-    -- Проверка на пересечения кнопок, если необходимо
-end
-
--- Перетаскивание меню уже добавлено
--- Округление кнопок
-local function applyUICornerToElement(element)
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 10)
-    corner.Parent = element
-end
-
-applyUICornerToElement(ToggleButton)
-applyUICornerToElement(CloseButton)
-applyUICornerToElement(FreezeButton)
-applyUICornerToElement(SpeedInput)
-applyUICornerToElement(LocalItemsButton)
-
--- Интерфейс уже настроен
