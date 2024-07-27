@@ -1,4 +1,3 @@
--- Создание интерфейса
 local TweenService = game:GetService("TweenService")
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
@@ -79,13 +78,6 @@ SpeedInput.Font = Enum.Font.SourceSans
 SpeedInput.TextSize = 24
 
 -- Конфигурация кнопки настроек
-SettingsFrame.Parent = ScreenGui
-SettingsFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
-SettingsFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
-SettingsFrame.Size = UDim2.new(0, 400, 0, 400)
-SettingsFrame.Visible = false
-SettingsFrame.BorderSizePixel = 0
-
 SettingsButton.Parent = MainFrame
 SettingsButton.BackgroundColor3 = Color3.new(0.4, 0.4, 0.4)
 SettingsButton.Position = UDim2.new(0.5, -50, 0, 80)
@@ -94,6 +86,14 @@ SettingsButton.Text = "Settings"
 SettingsButton.TextColor3 = Color3.new(1, 1, 1)
 SettingsButton.Font = Enum.Font.SourceSans
 SettingsButton.TextSize = 24
+
+-- Конфигурация фрейма настроек
+SettingsFrame.Parent = ScreenGui
+SettingsFrame.BackgroundColor3 = Color3.new(0.1, 0.1, 0.1)
+SettingsFrame.Position = UDim2.new(0.5, -200, 0.5, -200)
+SettingsFrame.Size = UDim2.new(0, 400, 0, 400)
+SettingsFrame.Visible = false
+SettingsFrame.BorderSizePixel = 0
 
 -- Конфигурация кнопок выбора языка
 EnglishButton.Parent = SettingsFrame
@@ -123,11 +123,18 @@ VersionLabel.Text = "Version: 1.0"
 VersionLabel.TextColor3 = Color3.new(1, 1, 1)
 VersionLabel.Font = Enum.Font.SourceSans
 VersionLabel.TextSize = 24
-RussianButton.TextColor3 = Color3.new(1, 1, 1)
+-- Функция для изменения языка
+local function changeLanguage(language)
+    if language == "English" then
+        SpeedLabel.Text = "Speed:"
+        FreezeButton.Text = "Freeze"
+        SettingsButton.Text = "Settings"
+        VersionLabel.Text = "Version: 1.0"
+        EnglishButton.TextColor3 = Color3.new(0.8, 0.8, 0.8)
+        RussianButton.TextColor3 = Color3.new(1, 1, 1)
     elseif language == "Russian" then
         SpeedLabel.Text = "Скорость:"
         FreezeButton.Text = "Заморозить"
-        GiveItemsButton.Text = "Выдать предметы"
         SettingsButton.Text = "Настройки"
         VersionLabel.Text = "Версия: 1.0"
         EnglishButton.TextColor3 = Color3.new(1, 1, 1)
@@ -162,7 +169,7 @@ MainFrame.InputBegan:Connect(function(input)
         dragging = true
         dragStart = input.Position
         startPos = MainFrame.Position
-        
+
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                 dragging = false
@@ -172,34 +179,58 @@ MainFrame.InputBegan:Connect(function(input)
 end)
 
 MainFrame.InputChanged:Connect(function(input)
-    if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
         update(input)
     end
 end)
+-- Логика для кнопок и функции заморозки скорости
+local isFrozen = false
+local currentSpeed = tonumber(SpeedInput.Text)
 
--- Обработчики событий
-ToggleButton.MouseButton1Click:Connect(toggleMainMenu)
-CloseButton.MouseButton1Click:Connect(function()
-    tweenFrame(MainFrame, UDim2.new(0, 0, 0, 0), MainFrame.Position, 0.5)
-    wait(0.5)
-    MainFrame.Visible = false
-end)
-SettingsButton.MouseButton1Click:Connect(toggleSettingsMenu)
-CloseButton.MouseButton1Click:Connect(function()
-    tweenFrame(SettingsFrame, UDim2.new(0, 0, 0, 0), SettingsFrame.Position, 0.5)
-    wait(0.5)
-    SettingsFrame.Visible = false
-end)
-FreezeButton.MouseButton1Click:Connect(function()
-    toggleFreeze()
-end)
-SpeedInput.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        updateSpeedFromInput()
+ToggleButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = not MainFrame.Visible
+    if MainFrame.Visible then
+        local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local tween = TweenService:Create(MainFrame, tweenInfo, {Position = UDim2.new(0.5, -200, 0.5, -200)})
+        tween:Play()
     end
 end)
 
--- Функции для изменения языка
+CloseButton.MouseButton1Click:Connect(function()
+    local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local tween = TweenService:Create(MainFrame, tweenInfo, {Position = UDim2.new(0.5, -200, 1, 0)})
+    tween:Play()
+    tween.Completed:Connect(function()
+        MainFrame.Visible = false
+    end)
+end)
+
+FreezeButton.MouseButton1Click:Connect(function()
+    isFrozen = not isFrozen
+    if isFrozen then
+        FreezeButton.Text = "Unfreeze"
+        RunService:BindToRenderStep("FreezeStep", Enum.RenderPriority.Character.Value, function()
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 0
+        end)
+    else
+        FreezeButton.Text = "Freeze"
+        RunService:UnbindFromRenderStep("FreezeStep")
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = currentSpeed
+    end
+end)
+
+SpeedInput.FocusLost:Connect(updateSpeedFromInput)
+
+SettingsButton.MouseButton1Click:Connect(function()
+    SettingsFrame.Visible = not SettingsFrame.Visible
+end)
+
 EnglishButton.MouseButton1Click:Connect(function()
     changeLanguage("English")
 end)
@@ -207,136 +238,6 @@ end)
 RussianButton.MouseButton1Click:Connect(function()
     changeLanguage("Russian")
 end)
--- Локальный скрипт для выдачи предметов и заморозки
-task.wait(1)
 
--- Переменные
-local Players = game:GetService("Players")
-local TextChatService = game:GetService("TextChatService")
-local LocalPlayer = Players.LocalPlayer
-local PlayerBackpack = LocalPlayer.Backpack
-
--- Функция, которая выдаёт все доступные для игрока предметы без повторяющихся эпизодов
-local function GetAllAvailableItems()
-    for _index, asset in game:GetDescendants() do
-        if asset:IsA("Tool") and not PlayerBackpack:FindFirstChild(asset.Name) then
-            asset:Clone().Parent = PlayerBackpack
-        end
-    end
-end
-
--- Если игрок написал что-то
-local function onPlayerChatted(textChatMessage)
-    local context
-    if typeof(textChatMessage) == "string" then
-        context = textChatMessage
-    else
-        context = textChatMessage.Text
-    end
-    if string.find(context, ";give me all") then
-        GetAllAvailableItems()
-    end
-end
-
--- Коннекты
-TextChatService.MessageReceived:Connect(onPlayerChatted)
-LocalPlayer.Chatted:Connect(onPlayerChatted)
-
--- Функции для заморозки
-local isFrozen = false
-local originalWalkSpeed = 16
-local currentSpeed = originalWalkSpeed
-local connection
-
-local function toggleFreeze()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-
-    if humanoid then
-        if not isFrozen then
-            -- Остановить персонажа для других игроков
-            character.HumanoidRootPart.Anchored = true
-
-            -- Событие для локального движения
-            connection = RunService.RenderStepped:Connect(function()
-                if isFrozen then
-                    local moveDirection = humanoid.MoveDirection
-                    local delta = moveDirection * currentSpeed / 60
-                    character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame + delta
-                end
-            end)
-
-            -- Включение заморозки
-            isFrozen = true
-            FreezeButton.Text = "Unfreeze"
-        else
-            -- Возвращение в нормальное состояние
-            character.HumanoidRootPart.Anchored = false
-            humanoid.WalkSpeed = originalWalkSpeed
-
-            -- Выключение заморозки
-            isFrozen = false
-            FreezeButton.Text = "Freeze"
-            if connection then connection:Disconnect() end
-        end
-    end
-end
--- Настройка плавной анимации для появления и исчезновения
-local function tweenVisibility(frame, visible, duration)
-    local goal = visible and {Size = UDim2.new(0, 400, 0, 400), Position = UDim2.new(0.5, -200, 0.5, -200)} or
-                  {Size = UDim2.new(0, 0, 0, 0), Position = frame.Position}
-    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Quart, Enum.EasingDirection.InOut)
-    local tween = TweenService:Create(frame, tweenInfo, goal)
-    tween:Play()
-    tween.Completed:Connect(function()
-        frame.Visible = visible
-    end)
-end
-
--- Анимация для открытия и закрытия меню
-local function openMainMenu()
-    MainFrame.Visible = true
-    tweenVisibility(MainFrame, true, 0.5)
-end
-
-local function closeMainMenu()
-    tweenVisibility(MainFrame, false, 0.5)
-end
-
-local function openSettingsMenu()
-    SettingsFrame.Visible = true
-    tweenVisibility(SettingsFrame, true, 0.5)
-end
-
-local function closeSettingsMenu()
-    tweenVisibility(SettingsFrame, false, 0.5)
-end
--- Обработчики для открытия и закрытия меню
-ToggleButton.MouseButton1Click:Connect(function()
-    if MainFrame.Visible then
-        closeMainMenu()
-    else
-        openMainMenu()
-    end
-end)
-
-SettingsButton.MouseButton1Click:Connect(function()
-    if SettingsFrame.Visible then
-        closeSettingsMenu()
-    else
-        openSettingsMenu()
-    end
-end)
-
-CloseButton.MouseButton1Click:Connect(function()
-    closeMainMenu()
-end)
-
-CloseButton.MouseButton1Click:Connect(function()
-    closeSettingsMenu()
-end)
-
-FreezeButton.MouseButton1Click:Connect(function()
-    toggleFreeze()
-end)
+-- Первоначальная настройка языка
+changeLanguage("English")
