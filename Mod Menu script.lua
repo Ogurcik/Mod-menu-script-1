@@ -1,4 +1,3 @@
--- UI Creation Module
 local function createUI()
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
@@ -104,7 +103,6 @@ local function createUI()
         VersionLabel = VersionLabel
     }
 end
--- Styling Module
 local function setupElement(element)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 10)
@@ -123,7 +121,6 @@ local function applyStyling(elements)
     setupElement(elements.SpeedInput)
     setupElement(elements.LocalItemsButton)
 end
--- Functionality Module
 local function updateSpeedFromInput(SpeedInput, SpeedLabel, currentSpeed)
     local inputSpeed = tonumber(SpeedInput.Text)
     if inputSpeed and inputSpeed > 0 then
@@ -205,7 +202,6 @@ local function setupToggleButtons(ToggleButton, CloseButton, MainFrame)
         MainFrame.Visible = false
     end)
 end
--- Draggable Module
 local function makeDraggable(gui)
     local dragging
     local dragInput
@@ -243,22 +239,21 @@ local function makeDraggable(gui)
         end
     end)
 end
--- Initialization Module
 local function initializeUI()
-    -- Create UI elements
+    -- Создание элементов UI
     local elements = createUI()
 
-    -- Apply styling to elements
+    -- Применение стилей к элементам
     applyStyling(elements)
 
-    -- Setup functionality
+    -- Настройка функциональности
     setupFreezeButton(elements.FreezeButton, elements.SpeedLabel, elements.SpeedInput)
     setupLocalItemsButton(elements.LocalItemsButton)
     setupToggleButtons(elements.ToggleButton, elements.CloseButton, elements.MainFrame)
 
-    -- Make the MainFrame draggable
+    -- Сделать MainFrame перетаскиваемым
     makeDraggable(elements.MainFrame)
 end
 
--- Initialize the UI
+-- Инициализация UI
 initializeUI()
