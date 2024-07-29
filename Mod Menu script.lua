@@ -1,4 +1,3 @@
--- UI Creation Module
 local function createUI()
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
@@ -8,7 +7,6 @@ local function createUI()
     local SpeedLabel = Instance.new("TextLabel")
     local SpeedInput = Instance.new("TextBox")
     local LocalItemsButton = Instance.new("TextButton")
-    local ESPButton = Instance.new("TextButton")
     local VersionLabel = Instance.new("TextLabel")
 
     ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -24,67 +22,58 @@ local function createUI()
     ToggleButton.Parent = ScreenGui
     ToggleButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     ToggleButton.Position = UDim2.new(0, 0, 0, 0)
-    ToggleButton.Size = UDim2.new(0, 80, 0, 40)
+    ToggleButton.Size = UDim2.new(0, 100, 0, 50)
     ToggleButton.Text = "Menu"
     ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     ToggleButton.Font = Enum.Font.GothamBold
-    ToggleButton.TextSize = 20
+    ToggleButton.TextSize = 24
 
     CloseButton.Parent = MainFrame
     CloseButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
     CloseButton.Position = UDim2.new(0.5, -50, 1, -40)
-    CloseButton.Size = UDim2.new(0, 80, 0, 30)
+    CloseButton.Size = UDim2.new(0, 100, 0, 30)
     CloseButton.Text = "Close"
     CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     CloseButton.Font = Enum.Font.GothamBold
-    CloseButton.TextSize = 20
+    CloseButton.TextSize = 24
 
     FreezeButton.Parent = MainFrame
     FreezeButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
     FreezeButton.Position = UDim2.new(0.5, -50, 0, 20)
-    FreezeButton.Size = UDim2.new(0, 80, 0, 40)
+    FreezeButton.Size = UDim2.new(0, 100, 0, 50)
     FreezeButton.Text = "Freeze"
     FreezeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     FreezeButton.Font = Enum.Font.GothamBold
-    FreezeButton.TextSize = 20
+    FreezeButton.TextSize = 24
 
     SpeedLabel.Parent = MainFrame
     SpeedLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    SpeedLabel.Position = UDim2.new(0.1, 0, 0.5, 0)
+    SpeedLabel.Position = UDim2.new(0.1, 0, 0.4, 0)
     SpeedLabel.Size = UDim2.new(0.8, 0, 0, 30)
     SpeedLabel.Text = "Speed:"
     SpeedLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     SpeedLabel.Font = Enum.Font.GothamBold
-    SpeedLabel.TextSize = 20
+    SpeedLabel.TextSize = 24
     SpeedLabel.Visible = false
 
     SpeedInput.Parent = MainFrame
     SpeedInput.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-    SpeedInput.Position = UDim2.new(0.1, 0, 0.6, 0)
+    SpeedInput.Position = UDim2.new(0.1, 0, 0.5, 0)
     SpeedInput.Size = UDim2.new(0.8, 0, 0, 30)
     SpeedInput.Text = "16"
     SpeedInput.TextColor3 = Color3.fromRGB(255, 255, 255)
     SpeedInput.Font = Enum.Font.GothamBold
-    SpeedInput.TextSize = 20
+    SpeedInput.TextSize = 24
     SpeedInput.Visible = false
 
     LocalItemsButton.Parent = MainFrame
     LocalItemsButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
-    LocalItemsButton.Position = UDim2.new(0.5, -50, 0, 80)
-    LocalItemsButton.Size = UDim2.new(0, 80, 0, 40)
+    LocalItemsButton.Position = UDim2.new(0.5, -50, 0, 100)
+    LocalItemsButton.Size = UDim2.new(0, 100, 0, 50)
     LocalItemsButton.Text = "Local Items"
     LocalItemsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     LocalItemsButton.Font = Enum.Font.GothamBold
-    LocalItemsButton.TextSize = 20
-
-    ESPButton.Parent = MainFrame
-    ESPButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
-    ESPButton.Position = UDim2.new(0.5, -50, 0, 140)
-    ESPButton.Size = UDim2.new(0, 80, 0, 40)
-    ESPButton.Text = "ESP"
-    ESPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    ESPButton.Font = Enum.Font.GothamBold
-    ESPButton.TextSize = 20
+    LocalItemsButton.TextSize = 24
 
     VersionLabel.Parent = MainFrame
     VersionLabel.BackgroundTransparency = 1
@@ -111,15 +100,9 @@ local function createUI()
         SpeedLabel = SpeedLabel,
         SpeedInput = SpeedInput,
         LocalItemsButton = LocalItemsButton,
-        ESPButton = ESPButton,
         VersionLabel = VersionLabel
     }
 end
-
-return {
-    createUI = createUI
-}
--- Styling Module
 local function setupElement(element)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, 10)
@@ -137,102 +120,104 @@ local function applyStyling(elements)
     setupElement(elements.FreezeButton)
     setupElement(elements.SpeedInput)
     setupElement(elements.LocalItemsButton)
-    setupElement(elements.ESPButton)
+end
+local function updateSpeedFromInput(SpeedInput, SpeedLabel, currentSpeed)
+    local inputSpeed = tonumber(SpeedInput.Text)
+    if inputSpeed and inputSpeed > 0 then
+        SpeedLabel.Text = "Speed: " .. tostring(inputSpeed)
+        return inputSpeed
+    else
+        SpeedInput.Text = tostring(currentSpeed)
+        return currentSpeed
+    end
 end
 
-return {
-    applyStyling = applyStyling
-}
--- Functionality Module
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
+local function setupFreezeButton(FreezeButton, SpeedLabel, SpeedInput)
+    local isFrozen = false
+    local currentSpeed = 16
+    local connection
 
-local function setupToggleButton(toggleButton, mainFrame)
-    toggleButton.MouseButton1Click:Connect(function()
-        mainFrame.Visible = not mainFrame.Visible
-    end)
-end
+    local function toggleFreeze()
+        local player = game.Players.LocalPlayer
+        local character = player.Character
+        local humanoid = character and character:FindFirstChildOfClass("Humanoid")
 
-local function setupCloseButton(closeButton, mainFrame)
-    closeButton.MouseButton1Click:Connect(function()
-        mainFrame.Visible = false
-    end)
-end
-
-local function setupFreezeButton(freezeButton, speedLabel, speedInput)
-    local isSpeeding = false
-    local originalWalkSpeed = game.Players.LocalPlayer.Character.Humanoid.WalkSpeed
-
-    freezeButton.MouseButton1Click:Connect(function()
-        isSpeeding = not isSpeeding
-        if isSpeeding then
-            speedLabel.Visible = true
-            speedInput.Visible = true
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = tonumber(speedInput.Text) or originalWalkSpeed
-        else
-            speedLabel.Visible = false
-            speedInput.Visible = false
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = originalWalkSpeed
-        end
-    end)
-
-    speedInput.FocusLost:Connect(function(enterPressed)
-        if enterPressed and isSpeeding then
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = tonumber(speedInput.Text) or originalWalkSpeed
-        end
-    end)
-end
-
-local function setupESPButton(espButton)
-    local espEnabled = false
-
-    local function toggleESP()
-        espEnabled = not espEnabled
-        if espEnabled then
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player ~= game.Players.LocalPlayer then
-                    local espBox = Instance.new("BoxHandleAdornment")
-                    espBox.Size = player.Character.HumanoidRootPart.Size
-                    espBox.Adornee = player.Character.HumanoidRootPart
-                    espBox.ZIndex = 10
-                    espBox.AlwaysOnTop = true
-                    espBox.Color3 = Color3.fromRGB(255, 0, 0)
-                    espBox.Parent = player.Character
-                end
-            end
-        else
-            for _, player in pairs(game.Players:GetPlayers()) do
-                if player ~= game.Players.LocalPlayer and player.Character:FindFirstChildOfClass("BoxHandleAdornment") then
-                    player.Character:FindFirstChildOfClass("BoxHandleAdornment"):Destroy()
-                end
+        if humanoid then
+            if not isFrozen then
+                character.HumanoidRootPart.Anchored = true
+                connection = game:GetService("RunService").RenderStepped:Connect(function()
+                    if isFrozen then
+                        local moveDirection = humanoid.MoveDirection
+                        local delta = moveDirection * currentSpeed / 60
+                        character.HumanoidRootPart.CFrame = character.HumanoidRootPart.CFrame + delta
+                    end
+                end)
+                isFrozen = true
+                FreezeButton.Text = "Unfreeze"
+                SpeedLabel.Visible = true
+                SpeedInput.Visible = true
+            else
+                character.HumanoidRootPart.Anchored = false
+                humanoid.WalkSpeed = 16
+                isFrozen = false
+                FreezeButton.Text = "Freeze"
+                if connection then connection:Disconnect() end
+                SpeedLabel.Visible = false
+                SpeedInput.Visible = false
             end
         end
     end
 
-    espButton.MouseButton1Click:Connect(toggleESP)
+    FreezeButton.MouseButton1Click:Connect(function()
+        toggleFreeze()
+    end)
+
+    SpeedInput.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            currentSpeed = updateSpeedFromInput(SpeedInput, SpeedLabel, currentSpeed)
+        end
+    end)
 end
 
-return {
-    setupToggleButton = setupToggleButton,
-    setupCloseButton = setupCloseButton,
-    setupFreezeButton = setupFreezeButton,
-    setupESPButton = setupESPButton
-}
--- Draggable Module
-local function makeDraggable(frame)
-    local UserInputService = game:GetService("UserInputService")
-    local dragging, dragInput, dragStart, startPos
+local function giveAllItems()
+    local player = game.Players.LocalPlayer
+    local backpack = player.Backpack
+    for _, asset in ipairs(game:GetDescendants()) do
+        if asset:IsA("Tool") and not backpack:FindFirstChild(asset.Name) then
+            asset:Clone().Parent = backpack
+        end
+    end
+end
+
+local function setupLocalItemsButton(LocalItemsButton)
+    LocalItemsButton.MouseButton1Click:Connect(giveAllItems)
+end
+
+local function setupToggleButtons(ToggleButton, CloseButton, MainFrame)
+    ToggleButton.MouseButton1Click:Connect(function()
+        MainFrame.Visible = not MainFrame.Visible
+    end)
+
+    CloseButton.MouseButton1Click:Connect(function()
+        MainFrame.Visible = false
+    end)
+end
+local function makeDraggable(gui)
+    local dragging
+    local dragInput
+    local dragStart
+    local startPos
 
     local function update(input)
         local delta = input.Position - dragStart
-        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
 
-    frame.InputBegan:Connect(function(input)
+    gui.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             dragStart = input.Position
-            startPos = frame.Position
+            startPos = gui.Position
 
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
@@ -242,39 +227,33 @@ local function makeDraggable(frame)
         end
     end)
 
-    frame.InputChanged:Connect(function(input)
+    gui.InputChanged:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             dragInput = input
         end
     end)
 
-    UserInputService.InputChanged:Connect(function(input)
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
         if input == dragInput and dragging then
             update(input)
         end
     end)
 end
+local function initializeUI()
+    -- Создание элементов UI
+    local elements = createUI()
 
-return {
-    makeDraggable = makeDraggable
-}
--- Initialization
-local UI = require(script.UI)
-local Styling = require(script.Styling)
-local Functionality = require(script.Functionality)
-local Draggable = require(script.Draggable)
+    -- Применение стилей к элементам
+    applyStyling(elements)
 
--- Создаем UI элементы
-local elements = UI.createUI()
+    -- Настройка функциональности
+    setupFreezeButton(elements.FreezeButton, elements.SpeedLabel, elements.SpeedInput)
+    setupLocalItemsButton(elements.LocalItemsButton)
+    setupToggleButtons(elements.ToggleButton, elements.CloseButton, elements.MainFrame)
 
--- Применяем стили
-Styling.applyStyling(elements)
+    -- Сделать MainFrame перетаскиваемым
+    makeDraggable(elements.MainFrame)
+end
 
--- Настраиваем кнопки
-Functionality.setupToggleButton(elements.ToggleButton, elements.MainFrame)
-Functionality.setupCloseButton(elements.CloseButton, elements.MainFrame)
-Functionality.setupFreezeButton(elements.FreezeButton, elements.SpeedLabel, elements.SpeedInput)
-Functionality.setupESPButton(elements.ESPButton)
-
--- Делаем окно перетаскиваемым
-Draggable.makeDraggable(elements.MainFrame)
+-- Инициализация UI
+initializeUI()
