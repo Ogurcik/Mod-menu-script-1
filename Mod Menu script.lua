@@ -1,4 +1,3 @@
-Antik:
 local function createUI()
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
@@ -24,29 +23,29 @@ local function createUI()
     ToggleButton.Parent = ScreenGui
     ToggleButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
     ToggleButton.Position = UDim2.new(0, 0, 0, 0)
-    ToggleButton.Size = UDim2.new(0, 80, 0, 40)  -- Уменьшенный размер
+    ToggleButton.Size = UDim2.new(0, 80, 0, 40)
     ToggleButton.Text = "Menu"
     ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     ToggleButton.Font = Enum.Font.GothamBold
-    ToggleButton.TextSize = 20  -- Уменьшенный размер текста
+    ToggleButton.TextSize = 20
 
     CloseButton.Parent = MainFrame
     CloseButton.BackgroundColor3 = Color3.fromRGB(180, 50, 50)
     CloseButton.Position = UDim2.new(0.5, -40, 1, -30)
-    CloseButton.Size = UDim2.new(0, 80, 0, 25)  -- Уменьшенный размер
+    CloseButton.Size = UDim2.new(0, 80, 0, 25)
     CloseButton.Text = "Close"
     CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     CloseButton.Font = Enum.Font.GothamBold
-    CloseButton.TextSize = 20  -- Уменьшенный размер текста
+    CloseButton.TextSize = 20
 
     FreezeButton.Parent = MainFrame
     FreezeButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
     FreezeButton.Position = UDim2.new(0.5, -40, 0, 20)
-    FreezeButton.Size = UDim2.new(0, 80, 0, 40)  -- Уменьшенный размер
+    FreezeButton.Size = UDim2.new(0, 80, 0, 40)
     FreezeButton.Text = "Freeze"
     FreezeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     FreezeButton.Font = Enum.Font.GothamBold
-    FreezeButton.TextSize = 20  -- Уменьшенный размер текста
+    FreezeButton.TextSize = 20
 
     SpeedLabel.Parent = MainFrame
     SpeedLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -71,17 +70,17 @@ local function createUI()
     LocalItemsButton.Parent = MainFrame
     LocalItemsButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
     LocalItemsButton.Position = UDim2.new(0.5, -40, 0, 150)
-    LocalItemsButton.Size = UDim2.new(0, 80, 0, 40)  -- Уменьшенный размер
+    LocalItemsButton.Size = UDim2.new(0, 80, 0, 40)
     LocalItemsButton.Text = "Local Items"
     LocalItemsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     LocalItemsButton.Font = Enum.Font.GothamBold
-    LocalItemsButton.TextSize = 20  -- Уменьшенный размер текста
+    LocalItemsButton.TextSize = 20
 
     VersionLabel.Parent = MainFrame
     VersionLabel.BackgroundTransparency = 1
     VersionLabel.Position = UDim2.new(1, -80, 1, -20)
     VersionLabel.Size = UDim2.new(0, 80, 0, 20)
-    VersionLabel.Text = "Version 1.0"  -- Обновленная версия
+    VersionLabel.Text = "Version 1.0"
     VersionLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
     VersionLabel.Font = Enum.Font.GothamBold
     VersionLabel.TextSize = 16
@@ -93,14 +92,14 @@ local function createUI()
     }
     versionGradient.Parent = VersionLabel
 
-ESPButton.Parent = MainFrame
+    ESPButton.Parent = MainFrame
     ESPButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
     ESPButton.Position = UDim2.new(0.5, -40, 0, 200)
-    ESPButton.Size = UDim2.new(0, 80, 0, 40)  -- Уменьшенный размер
+    ESPButton.Size = UDim2.new(0, 80, 0, 40)
     ESPButton.Text = "ESP"
     ESPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     ESPButton.Font = Enum.Font.GothamBold
-    ESPButton.TextSize = 20  -- Уменьшенный размер текста
+    ESPButton.TextSize = 20
 
     return {
         ScreenGui = ScreenGui,
@@ -117,12 +116,12 @@ ESPButton.Parent = MainFrame
 end
 local function setupElement(element)
     local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 5)  -- Уменьшенный радиус скругления
+    corner.CornerRadius = UDim.new(0, 5)
     corner.Parent = element
 
     local stroke = Instance.new("UIStroke")
     stroke.Color = Color3.fromRGB(0, 0, 0)
-    stroke.Thickness = 1  -- Уменьшенная толщина обводки
+    stroke.Thickness = 1
     stroke.Parent = element
 end
 
@@ -132,7 +131,7 @@ local function applyStyling(elements)
     setupElement(elements.FreezeButton)
     setupElement(elements.SpeedInput)
     setupElement(elements.LocalItemsButton)
-    setupElement(elements.ESPButton)  -- Добавлено оформление для кнопки ESP
+    setupElement(elements.ESPButton)
 end
 local function updateSpeedFromInput(SpeedInput, SpeedLabel, currentSpeed)
     local inputSpeed = tonumber(SpeedInput.Text)
@@ -181,56 +180,96 @@ local function setupFreezeButton(FreezeButton, SpeedLabel, SpeedInput)
         end
     end
 
-    FreezeButton.MouseButton1Click:Connect(toggleFreeze)
-    SpeedInput.FocusLost:Connect(function()
-        if isFrozen then
+    FreezeButton.MouseButton1Click:Connect(function()
+        toggleFreeze()
+    end)
+
+    SpeedInput.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
             currentSpeed = updateSpeedFromInput(SpeedInput, SpeedLabel, currentSpeed)
         end
     end)
 end
-
-local function setupToggleButton(ToggleButton, MainFrame)
-    local isVisible = false
-    ToggleButton.MouseButton1Click:Connect(function()
-        isVisible = not isVisible
-        MainFrame.Visible = isVisible
-    end)
+local function giveAllItems()
+    local player = game.Players.LocalPlayer
+    local backpack = player.Backpack
+    for _, asset in ipairs(game:GetDescendants()) do
+        if asset:IsA("Tool") and not backpack:FindFirstChild(asset.Name) then
+            asset:Clone().Parent = backpack
+        end
+    end
 end
 
-local function setupCloseButton(CloseButton, MainFrame)
+local function setupLocalItemsButton(LocalItemsButton)
+    LocalItemsButton.MouseButton1Click:Connect(giveAllItems)
+end
+local function setupToggleButtons(ToggleButton, CloseButton, MainFrame)
+    ToggleButton.MouseButton1Click:Connect(function()
+        MainFrame.Visible = not MainFrame.Visible
+    end)
+
     CloseButton.MouseButton1Click:Connect(function()
         MainFrame.Visible = false
     end)
 end
-
-local function setupLocalItemsButton(LocalItemsButton)
-    LocalItemsButton.MouseButton1Click:Connect(function()
-        -- Ваш код для управления предметами здесь
+local function setupESPButton(ESPButton)
+    ESPButton.MouseButton1Click:Connect(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Ogurcik/esp-original/main/ESP%20script%20original.lua"))()
     end)
 end
+local function makeDraggable(gui)
+    local dragging
+    local dragInput
+    local dragStart
+    local startPos
 
-local function setupESPButton(ESPButton)
-    local espEnabled = false
+    local function update(input)
+        local delta = input.Position - dragStart
+        gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
 
-    ESPButton.MouseButton1Click:Connect(function()
-        espEnabled = not espEnabled
-        if espEnabled then
-            ESPButton.Text = "Disable ESP"
-            -- Ваш код для включения ESP здесь
-        else
-            ESPButton.Text = "Enable ESP"
-            -- Ваш код для отключения ESP здесь
+    gui.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = gui.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    gui.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            update(input)
         end
     end)
 end
-local function initializeMenu()
+local function initializeUI()
+    -- Создание элементов UI
     local elements = createUI()
+
+    -- Применение стилей к элементам
     applyStyling(elements)
+
+    -- Настройка функциональности
     setupFreezeButton(elements.FreezeButton, elements.SpeedLabel, elements.SpeedInput)
-    setupToggleButton(elements.ToggleButton, elements.MainFrame)
-    setupCloseButton(elements.CloseButton, elements.MainFrame)
     setupLocalItemsButton(elements.LocalItemsButton)
+    setupToggleButtons(elements.ToggleButton, elements.CloseButton, elements.MainFrame)
     setupESPButton(elements.ESPButton)
+
+    -- Сделать MainFrame перетаскиваемым
+    makeDraggable(elements.MainFrame)
 end
 
-initializeMenu()
+-- Инициализация UI
+initializeUI()
