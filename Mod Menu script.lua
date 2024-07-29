@@ -1,3 +1,4 @@
+Antik:
 local function createUI()
     local ScreenGui = Instance.new("ScreenGui")
     local MainFrame = Instance.new("Frame")
@@ -92,7 +93,7 @@ local function createUI()
     }
     versionGradient.Parent = VersionLabel
 
-    ESPButton.Parent = MainFrame
+ESPButton.Parent = MainFrame
     ESPButton.BackgroundColor3 = Color3.fromRGB(75, 75, 75)
     ESPButton.Position = UDim2.new(0.5, -40, 0, 200)
     ESPButton.Size = UDim2.new(0, 80, 0, 40)  -- Уменьшенный размер
@@ -180,208 +181,56 @@ local function setupFreezeButton(FreezeButton, SpeedLabel, SpeedInput)
         end
     end
 
-    FreezeButton.MouseButton1Click:Connect(function()
-        toggleFreeze()
-    end)
-
-    SpeedInput.FocusLost:Connect(function(enterPressed)
-        if enterPressed then
+    FreezeButton.MouseButton1Click:Connect(toggleFreeze)
+    SpeedInput.FocusLost:Connect(function()
+        if isFrozen then
             currentSpeed = updateSpeedFromInput(SpeedInput, SpeedLabel, currentSpeed)
         end
     end)
 end
 
-local function giveAllItems()
-    local player = game.Players.LocalPlayer
-    local backpack = player.Backpack
-    for _, asset in ipairs(game:GetDescendants()) do
-        if asset:IsA("Tool") and not backpack:FindFirstChild(asset.Name) then
-            asset:Clone().Parent = backpack
-        end
-    end
-end
-
-local function setupLocalItemsButton(LocalItemsButton)
-    LocalItemsButton.MouseButton1Click:Connect(giveAllItems)
-end
-
-local function setupToggleButtons(ToggleButton, CloseButton, MainFrame)
+local function setupToggleButton(ToggleButton, MainFrame)
+    local isVisible = false
     ToggleButton.MouseButton1Click:Connect(function()
-        MainFrame.Visible = not MainFrame.Visible
+        isVisible = not isVisible
+        MainFrame.Visible = isVisible
     end)
+end
 
+local function setupCloseButton(CloseButton, MainFrame)
     CloseButton.MouseButton1Click:Connect(function()
         MainFrame.Visible = false
     end)
 end
 
+local function setupLocalItemsButton(LocalItemsButton)
+    LocalItemsButton.MouseButton1Click:Connect(function()
+        -- Ваш код для управления предметами здесь
+    end)
+end
+
 local function setupESPButton(ESPButton)
-    local function createESP(player)
-        if player == game.Players.LocalPlayer then return end
-
-        local function onCharacterAdded(character)
-            local head = character:WaitForChild("Head", 10)
-            if not head then return end
-
-            -- Удаление старых ESP элементов, если они есть
-            for _, child in pairs(head:GetChildren()) do
-                if child:IsA("BillboardGui") then
-                    child:Destroy()
-                end
-            end
-
-            -- Создание надписей с именем и здоровьем
-            local billboard = Instance.new("BillboardGui", head)
-            billboard.Name = "ESP"
-            billboard.AlwaysOnTop = true
-            billboard.Size = UDim2.new(0, 100, 0, 50)
-            billboard.StudsOffset = Vector3.new(0, 3, 0)
-
-            local frame = Instance.new("Frame", billboard)
-            frame.Size = UDim2.new(1, 0, 1, 0)
-            frame.BackgroundTransparency = 1
-
-            local nameLabel = Instance.new("TextLabel", frame)
-            nameLabel.Size = UDim2.new(1, 0, 0.5, 0)
-            nameLabel.BackgroundTransparency = 1
-            nameLabel.Text = player.Name
-            nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-            nameLabel.TextStrokeTransparency = 0
-            nameLabel.Font = Enum.Font.SourceSansBold
-            nameLabel.TextSize = 10 -- Начальный размер текста для никнейма
-            nameLabel.TextScaled = true
-            nameLabel.TextWrapped = true
-
-            -- Уменьшение размера текста, если никнейм слишком длинный
-            nameLabel:GetPropertyChangedSignal("TextBounds"):Connect(function()
-                if nameLabel.TextBounds.X > nameLabel.AbsoluteSize.X then
-                    nameLabel.TextSize = 10 * (nameLabel.AbsoluteSize.X / nameLabel.TextBounds.X)
-                end
-            end)
-
-            local healthLabel = Instance.new("TextLabel", frame)
-            healthLabel.Size = UDim2.new(1, 0, 0.5, 0)
-            healthLabel.Position = UDim2.new(0, 0, 0.5, 0)
-            healthLabel.BackgroundTransparency = 1
-            healthLabel.TextStrokeTransparency = 0
-            healthLabel.Font = Enum.Font.SourceSansBold
-            healthLabel.TextSize = 10 -- Размер текста для здоровья
-
-            -- Локальная переменная для хранения предыдущего значения здоровья
-            local lastHealth = -1
-
-            local function updateESP()
-                if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
-                    local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
-                    local health = humanoid.Health
-
-                    -- Обновляем текст и цвет подсветки только при изменении здоровья
-                    if math.floor(health) ~= lastHealth then
-                        healthLabel.Text = "HP: " .. math.floor(health)
-                        local color = createColorGradient(health)
-                        healthLabel.TextColor3 = color
-                        if character:FindFirstChild("Highlight") then
-                            character.Highlight.FillColor = color
-                        else
-                            local highlight = Instance.new("Highlight", character)
-                            highlight.Name = "Highlight"
-                            highlight.FillColor = color
-                            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
-                            highlight.FillTransparency = 0.5
-                            highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
-                            highlight.OutlineTransparency = 0
-                        end
-                        lastHealth = math.floor(health)
-                    end
-                end
-            end
-
-            -- Обновляем текст и цвет с частотой 10 раз в секунду
-            local updateConnection = RunService.RenderStepped:Connect(function(step)
-                if step >= 0.1 then
-                    updateESP()
-                end
-            end)
-
-            -- Убедитесь, что соединение отключено при удалении персонажа
-            player.CharacterRemoving:Connect(function()
-                if updateConnection then
-                    updateConnection:Disconnect()
-                end
-            end)
-
-            updateESP()
-        end
-
-        if player.Character then
-            onCharacterAdded(player.Character)
-        end
-        player.CharacterAdded:Connect(onCharacterAdded)
-    end
+    local espEnabled = false
 
     ESPButton.MouseButton1Click:Connect(function()
-        for _, player in pairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer then
-                createESP(player)
-            end
-        end
-        game.Players.PlayerAdded:Connect(createESP)
-    end)
-end
-local function makeDraggable(gui)
-    local dragging
-    local dragInput
-    local dragStart
-    local startPos
-
-    local function update(input)
-        local delta = input.Position - dragStart
-        gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-    end
-
-    gui.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = gui.Position
-
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
-            end)
-        end
-    end)
-
-    gui.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-
-    game:GetService("UserInputService").InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            update(input)
+        espEnabled = not espEnabled
+        if espEnabled then
+            ESPButton.Text = "Disable ESP"
+            -- Ваш код для включения ESP здесь
+        else
+            ESPButton.Text = "Enable ESP"
+            -- Ваш код для отключения ESP здесь
         end
     end)
 end
-
-local function initializeUI()
-    -- Создание элементов UI
+local function initializeMenu()
     local elements = createUI()
-
-    -- Применение стилей к элементам
     applyStyling(elements)
-
-    -- Настройка функциональности
     setupFreezeButton(elements.FreezeButton, elements.SpeedLabel, elements.SpeedInput)
+    setupToggleButton(elements.ToggleButton, elements.MainFrame)
+    setupCloseButton(elements.CloseButton, elements.MainFrame)
     setupLocalItemsButton(elements.LocalItemsButton)
-    setupToggleButtons(elements.ToggleButton, elements.CloseButton, elements.MainFrame)
-    setupESPButton(elements.ESPButton)  -- Настройка кнопки ESP
-
-    -- Сделать MainFrame перетаскиваемым
-    makeDraggable(elements.MainFrame)
+    setupESPButton(elements.ESPButton)
 end
 
--- Инициализация UI
-initializeUI()
+initializeMenu()
